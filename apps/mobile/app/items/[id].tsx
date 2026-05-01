@@ -6,7 +6,19 @@ import { scheduleLocalReminder } from "@/services/notifications";
 import { getLifeItem, updateLifeItem } from "@/storage/lifeItemsStorage";
 import { LifeItem, LifeItemStatus, typeLabels } from "@/types/life";
 
-const fields: Array<keyof LifeItem> = ["type", "title", "summary", "amount", "date", "dueDate", "location", "merchant", "category", "remindAt", "rawText"];
+const fields: Array<{ key: keyof LifeItem; label: string }> = [
+  { key: "type", label: "类型" },
+  { key: "title", label: "标题" },
+  { key: "summary", label: "摘要" },
+  { key: "amount", label: "金额" },
+  { key: "date", label: "日期" },
+  { key: "dueDate", label: "到期日" },
+  { key: "location", label: "地点" },
+  { key: "merchant", label: "商家" },
+  { key: "category", label: "分类" },
+  { key: "remindAt", label: "提醒时间" },
+  { key: "rawText", label: "原始文本" }
+];
 
 export default function ItemDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -55,12 +67,12 @@ export default function ItemDetailScreen() {
           <Title>字段编辑</Title>
           {fields.map((field) => (
             <FieldInput
-              key={field}
-              label={field}
-              multiline={field === "rawText" || field === "summary"}
-              keyboardType={field === "amount" ? "decimal-pad" : "default"}
-              value={String(item[field] ?? "")}
-              onChangeText={(value) => patch({ [field]: field === "amount" ? Number(value) || null : value } as Partial<LifeItem>)}
+              key={field.key}
+              label={field.label}
+              multiline={field.key === "rawText" || field.key === "summary"}
+              keyboardType={field.key === "amount" ? "decimal-pad" : "default"}
+              value={String(item[field.key] ?? "")}
+              onChangeText={(value) => patch({ [field.key]: field.key === "amount" ? Number(value) || null : value } as Partial<LifeItem>)}
             />
           ))}
         </Card>

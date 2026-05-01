@@ -3,17 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --background: 42 36% 96%;
-  --foreground: 210 24% 12%;
+  --background: 42 48% 96%;
+  --foreground: 214 28% 14%;
   --card: 0 0% 100%;
-  --card-foreground: 210 24% 12%;
-  --muted: 210 18% 92%;
-  --muted-foreground: 210 10% 38%;
-  --border: 210 18% 84%;
-  --primary: 166 72% 30%;
+  --card-foreground: 214 28% 14%;
+  --muted: 38 36% 91%;
+  --muted-foreground: 214 12% 42%;
+  --border: 35 24% 84%;
+  --primary: 168 64% 28%;
   --primary-foreground: 0 0% 100%;
-  --accent: 24 86% 58%;
-  --accent-foreground: 210 24% 12%;
+  --accent: 26 92% 62%;
+  --accent-foreground: 214 28% 14%;
 }
 
 * {
@@ -28,10 +28,15 @@ body {
   margin: 0;
   background: hsl(var(--background));
   color: hsl(var(--foreground));
+  min-width: 320px;
 }
 
 button,
 input,
 textarea {
   font: inherit;
+}
+
+::selection {
+  background: hsl(var(--accent) / 0.28);
 }

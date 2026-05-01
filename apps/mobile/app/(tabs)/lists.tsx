@@ -1,7 +1,7 @@
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Button, Card, FieldInput, Muted, Screen, Title, colors } from "@/components/ui";
+import { Button, Card, EmptyState, FieldInput, Muted, Screen, Title, colors } from "@/components/ui";
 import { generateChecklist } from "@/services/internAI";
 import { addList, loadLists, updateList } from "@/storage/listsStorage";
 import { loadSettings } from "@/storage/settingsStorage";
@@ -47,10 +47,17 @@ export default function ListsScreen() {
           <Title>AI 清单</Title>
           <Muted>输入一个生活场景，生成可勾选的购物、出门或旅行清单。</Muted>
           <FieldInput label="生活场景" value={scene} onChangeText={setScene} placeholder="例如：周末去露营" />
+          <View style={styles.examples}>
+            {["周末露营", "搬家准备", "短途旅行"].map((example) => (
+              <Pressable key={example} style={styles.example} onPress={() => setScene(example)}>
+                <Text style={styles.exampleText}>{example}</Text>
+              </Pressable>
+            ))}
+          </View>
           <Button label="生成清单" loading={loading} onPress={createList} />
         </Card>
 
-        {lists.length === 0 ? <Card><Muted>生成后的清单会保存在本地。</Muted></Card> : lists.map((list) => (
+        {lists.length === 0 ? <EmptyState title="还没有清单" description="可以从周末露营、搬家准备、短途旅行开始生成第一份清单。" /> : lists.map((list) => (
           <Card key={list.id}>
             <Title>{list.title}</Title>
             <Muted>{list.summary}</Muted>
@@ -72,6 +79,9 @@ export default function ListsScreen() {
 
 const styles = StyleSheet.create({
   scroll: { gap: 12, paddingBottom: 24 },
+  examples: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  example: { backgroundColor: colors.soft, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: "#b7d9d0" },
+  exampleText: { color: colors.primary, fontWeight: "700", fontSize: 12 },
   item: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 9, borderTopWidth: 1, borderTopColor: colors.border },
   checkbox: { width: 24, height: 24, borderRadius: 7, borderWidth: 1, borderColor: "#93c5fd", alignItems: "center", justifyContent: "center" },
   checked: { backgroundColor: colors.primary, borderColor: colors.primary },

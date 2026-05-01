@@ -1,7 +1,7 @@
 import { useFocusEffect } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { Card, Muted, Screen, Title, colors } from "@/components/ui";
+import { Card, EmptyState, Muted, Screen, Title, colors } from "@/components/ui";
 import { loadLifeItems } from "@/storage/lifeItemsStorage";
 import { LifeItem } from "@/types/life";
 import { isThisMonth, isThisWeek } from "@/utils/dates";
@@ -30,10 +30,13 @@ export default function ExpensesScreen() {
         </View>
         <Card>
           <Title>分类统计</Title>
-          {categories.length === 0 ? <Muted>还没有保存消费类型卡片。</Muted> : categories.map(([category, total]) => (
-            <View key={category} style={styles.row}>
-              <Text style={styles.category}>{category}</Text>
-              <Text style={styles.total}>¥{total.toFixed(2)}</Text>
+          {categories.length === 0 ? <EmptyState title="暂无消费记录" description="保存小票、订单或账单后，会自动生成分类统计。" /> : categories.map(([category, total]) => (
+            <View key={category} style={styles.categoryBlock}>
+              <View style={styles.row}>
+                <Text style={styles.category}>{category}</Text>
+                <Text style={styles.total}>¥{total.toFixed(2)}</Text>
+              </View>
+              <View style={styles.bar}><View style={[styles.barFill, { width: `${Math.max(monthTotal ? total / monthTotal * 100 : 0, 8)}%` }]} /></View>
             </View>
           ))}
         </Card>
@@ -50,7 +53,10 @@ const styles = StyleSheet.create({
   scroll: { gap: 12, paddingBottom: 24 },
   cards: { gap: 12 },
   money: { color: colors.text, fontSize: 28, fontWeight: "800" },
-  row: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 10, borderTopWidth: 1, borderTopColor: colors.border },
+  categoryBlock: { gap: 8, paddingTop: 10, borderTopWidth: 1, borderTopColor: colors.border },
+  row: { flexDirection: "row", justifyContent: "space-between" },
   category: { color: colors.text, fontWeight: "700" },
-  total: { color: colors.primary, fontWeight: "800" }
+  total: { color: colors.primary, fontWeight: "800" },
+  bar: { height: 8, borderRadius: 999, backgroundColor: colors.soft, overflow: "hidden" },
+  barFill: { height: 8, borderRadius: 999, backgroundColor: colors.primary }
 });

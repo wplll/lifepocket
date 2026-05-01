@@ -72,6 +72,10 @@ export default function SettingsScreen() {
             <Text style={styles.result}>{result}</Text>
           </Card>
         ) : null}
+        <Card>
+          <Title>隐私说明</Title>
+          <Muted>Token 只保存在本机；图片和文本只有在你点击识别时才会发送到当前配置的模型接口。不要把身份证、银行卡、真实密钥等敏感信息提交给不可信接口。</Muted>
+        </Card>
       </ScrollView>
     </Screen>
   );

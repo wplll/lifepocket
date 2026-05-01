@@ -1,7 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Link, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Button, Card, Muted, Screen, Title, colors } from "@/components/ui";
+import { Button, Card, EmptyState, Muted, Screen, Title, colors } from "@/components/ui";
 import { loadLifeItems } from "@/storage/lifeItemsStorage";
 import { LifeItem, typeLabels } from "@/types/life";
 import { formatDate, formatDateTime, isThisWeek } from "@/utils/dates";
@@ -25,6 +26,7 @@ export default function HomeScreen() {
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.header}>
           <View>
+            <Text style={styles.kicker}>AI 生活口袋</Text>
             <Title>今日生活口袋</Title>
             <Muted>整理截图、账单、预约和待办。</Muted>
           </View>
@@ -32,9 +34,9 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.quickGrid}>
-          <Link href="/upload" asChild><Pressable style={styles.quick}><Text style={styles.quickText}>上传截图</Text></Pressable></Link>
-          <Link href="/upload" asChild><Pressable style={styles.quick}><Text style={styles.quickText}>拍照</Text></Pressable></Link>
-          <Link href="/upload" asChild><Pressable style={styles.quick}><Text style={styles.quickText}>粘贴文本</Text></Pressable></Link>
+          <Link href="/upload" asChild><Pressable style={styles.quick}><Ionicons name="image-outline" size={20} color={colors.primary} /><Text style={styles.quickText}>上传截图</Text></Pressable></Link>
+          <Link href="/upload" asChild><Pressable style={styles.quick}><Ionicons name="camera-outline" size={20} color={colors.primary} /><Text style={styles.quickText}>拍照票据</Text></Pressable></Link>
+          <Link href="/upload" asChild><Pressable style={styles.quick}><Ionicons name="create-outline" size={20} color={colors.primary} /><Text style={styles.quickText}>粘贴文本</Text></Pressable></Link>
         </View>
 
         <Card>
@@ -44,12 +46,12 @@ export default function HomeScreen() {
 
         <Card>
           <Title>今天要处理</Title>
-          {todaysItems.length === 0 ? <Muted>今天还没有到期事项。</Muted> : todaysItems.map((item) => <ItemRow key={item.id} item={item} />)}
+          {todaysItems.length === 0 ? <EmptyState title="今天很清爽" description="到期账单、预约和待办会出现在这里。" /> : todaysItems.map((item) => <ItemRow key={item.id} item={item} />)}
         </Card>
 
         <Card>
           <Title>最近识别</Title>
-          {items.length === 0 ? <Muted>保存第一张生活卡片后，会显示在这里。</Muted> : items.slice(0, 5).map((item) => <ItemRow key={item.id} item={item} />)}
+          {items.length === 0 ? <EmptyState title="还没有生活卡片" description="上传第一张小票、账单或预约截图，AI 会整理成卡片。" /> : items.slice(0, 5).map((item) => <ItemRow key={item.id} item={item} />)}
         </Card>
       </ScrollView>
     </Screen>
@@ -73,8 +75,9 @@ function ItemRow({ item }: { item: LifeItem }) {
 const styles = StyleSheet.create({
   scroll: { gap: 12, paddingBottom: 24 },
   header: { flexDirection: "row", justifyContent: "space-between", gap: 12, alignItems: "center" },
+  kicker: { color: colors.primary, fontSize: 12, fontWeight: "800", marginBottom: 4 },
   quickGrid: { flexDirection: "row", gap: 8 },
-  quick: { flex: 1, backgroundColor: colors.soft, borderRadius: 12, minHeight: 58, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "#bfdbfe" },
+  quick: { flex: 1, backgroundColor: colors.soft, borderRadius: 14, minHeight: 74, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "#b7d9d0", gap: 4 },
   quickText: { color: colors.primary, fontWeight: "700" },
   money: { fontSize: 30, fontWeight: "800", color: colors.text },
   row: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 8, borderTopWidth: 1, borderTopColor: colors.border },

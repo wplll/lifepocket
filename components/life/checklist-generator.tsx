@@ -18,6 +18,7 @@ export function ChecklistGenerator() {
   const [kind, setKind] = useState<Checklist["kind"]>("shopping");
   const [context, setContext] = useState("牛奶，纸巾，水果，明早送达");
   const [lists, setLists] = useState(demoChecklists);
+  const [checked, setChecked] = useState<Record<string, boolean>>({});
 
   return (
     <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
@@ -43,6 +44,18 @@ export function ChecklistGenerator() {
             onChange={(event) => setContext(event.target.value)}
             placeholder="输入场景、目的地、购物需求..."
           />
+          <div className="flex flex-wrap gap-2">
+            {["周末露营", "搬家准备", "短途旅行"].map((example) => (
+              <button
+                className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                key={example}
+                type="button"
+                onClick={() => setContext(example)}
+              >
+                {example}
+              </button>
+            ))}
+          </div>
           <Button
             type="button"
             onClick={() => setLists([generateChecklist(kind, context), ...lists])}
@@ -64,13 +77,17 @@ export function ChecklistGenerator() {
             <CardContent>
               <div className="grid gap-2 sm:grid-cols-2">
                 {list.items.map((item) => (
-                  <div
+                  <button
                     key={item}
-                    className="flex items-center gap-2 rounded-md bg-muted/60 px-3 py-2 text-sm"
+                    type="button"
+                    className="flex items-center gap-2 rounded-md bg-muted/60 px-3 py-2 text-left text-sm transition-colors hover:bg-primary/10"
+                    onClick={() => setChecked((current) => ({ ...current, [`${list.id}-${item}`]: !current[`${list.id}-${item}`] }))}
                   >
-                    <Check className="h-4 w-4 text-primary" />
-                    {item}
-                  </div>
+                    <span className="flex h-5 w-5 flex-none items-center justify-center rounded-md border border-primary/40 bg-card">
+                      {checked[`${list.id}-${item}`] && <Check className="h-3.5 w-3.5 text-primary" />}
+                    </span>
+                    <span className={checked[`${list.id}-${item}`] ? "text-muted-foreground line-through" : ""}>{item}</span>
+                  </button>
                 ))}
               </div>
             </CardContent>

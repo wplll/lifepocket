@@ -2,7 +2,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, Image, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Button, Card, FieldInput, Muted, Screen, Title, colors } from "@/components/ui";
+import { Button, Card, EmptyState, FieldInput, Muted, Screen, Title, colors } from "@/components/ui";
 import { recognizeImage, recognizeText } from "@/services/internAI";
 import { loadSettings } from "@/storage/settingsStorage";
 import { upsertLifeItem } from "@/storage/lifeItemsStorage";
@@ -29,6 +29,10 @@ export default function UploadScreen() {
   }
 
   async function recognize() {
+    if (!imageUri && !text.trim()) {
+      Alert.alert("缺少内容", "请先选择图片、拍照或粘贴一段文字。");
+      return;
+    }
     setLoading(true);
     try {
       const settings = await loadSettings();
@@ -53,6 +57,10 @@ export default function UploadScreen() {
         <Card>
           <Title>上传 / 识别</Title>
           <Muted>使用你在设置页填写的 Token 调用书生模型。图片只从本机读取并随请求发送给模型。</Muted>
+          <View style={styles.drop}>
+            <Text style={styles.dropTitle}>{imageUri ? "已选择图片" : "截图收纳箱"}</Text>
+            <Text style={styles.dropText}>小票、账单、预约、购物截图和旅行信息都可以从这里进入。</Text>
+          </View>
           <View style={styles.actions}>
             <Button label="选择图片" variant="secondary" onPress={() => pickImage(false)} />
             <Button label="拍照" variant="secondary" onPress={() => pickImage(true)} />
@@ -79,7 +87,9 @@ export default function UploadScreen() {
             </View>
             <Button label="保存卡片" onPress={save} />
           </Card>
-        ) : null}
+        ) : (
+          <EmptyState title="等待识别" description="识别成功后会预览类型、标题、金额、日期、商家和分类。" />
+        )}
       </ScrollView>
     </Screen>
   );
@@ -96,6 +106,9 @@ function Meta({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   scroll: { gap: 12, paddingBottom: 24 },
+  drop: { borderWidth: 1, borderStyle: "dashed", borderColor: colors.border, backgroundColor: "#fffaf2", borderRadius: 16, padding: 16, gap: 4 },
+  dropTitle: { color: colors.text, fontSize: 16, fontWeight: "800" },
+  dropText: { color: colors.muted, lineHeight: 20 },
   actions: { flexDirection: "row", gap: 8 },
   preview: { width: "100%", height: 190, borderRadius: 12, backgroundColor: colors.border },
   resultHead: { flexDirection: "row", justifyContent: "space-between" },

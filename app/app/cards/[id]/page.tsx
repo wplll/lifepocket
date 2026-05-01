@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { demoCards, typeLabels } from "@/lib/demo-data";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
@@ -39,6 +40,11 @@ export default function CardDetailPage({ params }: { params: { id: string } }) {
           <Field label="分类" value={card.category ?? "-"} />
         </CardContent>
       </Card>
+      <div className="flex flex-wrap gap-2">
+        <Button type="button">编辑字段</Button>
+        <Button type="button" variant="secondary">标记完成</Button>
+        <Button type="button" variant="secondary">归档</Button>
+      </div>
       <Card>
         <CardHeader>
           <CardTitle>原始来源</CardTitle>

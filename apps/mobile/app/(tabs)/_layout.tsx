@@ -14,10 +14,11 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={({ route }) => ({
         headerTitleAlign: "center",
-        headerTintColor: "#0f172a",
-        tabBarActiveTintColor: "#2563eb",
-        tabBarInactiveTintColor: "#64748b",
-        tabBarStyle: { height: 62, paddingBottom: 8, paddingTop: 6 },
+        headerTintColor: "#16212a",
+        headerStyle: { backgroundColor: "#f8f3ea" },
+        tabBarActiveTintColor: "#237e6f",
+        tabBarInactiveTintColor: "#66747f",
+        tabBarStyle: { height: 64, paddingBottom: 8, paddingTop: 6, backgroundColor: "#fffdf9", borderTopColor: "#e7dcca" },
         tabBarIcon: ({ color, size }) => {
           const icon = tabs[route.name as keyof typeof tabs]?.[1] ?? "ellipse-outline";
           return <Ionicons name={icon} size={size} color={color} />;
