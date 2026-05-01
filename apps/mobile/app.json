@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "LifePocket",
+    "slug": "lifepocket-mobile",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "lifepocket",
+    "userInterfaceStyle": "light",
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-notifications"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "LifePocket 需要使用相机拍摄小票、账单和生活信息截图。",
+        "NSPhotoLibraryUsageDescription": "LifePocket 需要读取相册图片用于 AI 识别。"
+      }
+    },
+    "android": {
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES",
+        "POST_NOTIFICATIONS"
+      ]
+    }
+  }
+}

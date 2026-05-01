@@ -1,0 +1,34 @@
+import { Ionicons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
+
+const tabs = {
+  index: ["首页", "home-outline"],
+  upload: ["上传", "cloud-upload-outline"],
+  expenses: ["消费", "card-outline"],
+  lists: ["清单", "checkbox-outline"],
+  settings: ["设置", "settings-outline"]
+} as const;
+
+export default function TabsLayout() {
+  return (
+    <Tabs
+      screenOptions={({ route }) => ({
+        headerTitleAlign: "center",
+        headerTintColor: "#0f172a",
+        tabBarActiveTintColor: "#2563eb",
+        tabBarInactiveTintColor: "#64748b",
+        tabBarStyle: { height: 62, paddingBottom: 8, paddingTop: 6 },
+        tabBarIcon: ({ color, size }) => {
+          const icon = tabs[route.name as keyof typeof tabs]?.[1] ?? "ellipse-outline";
+          return <Ionicons name={icon} size={size} color={color} />;
+        }
+      })}
+    >
+      <Tabs.Screen name="index" options={{ title: tabs.index[0] }} />
+      <Tabs.Screen name="upload" options={{ title: tabs.upload[0] }} />
+      <Tabs.Screen name="expenses" options={{ title: tabs.expenses[0] }} />
+      <Tabs.Screen name="lists" options={{ title: tabs.lists[0] }} />
+      <Tabs.Screen name="settings" options={{ title: tabs.settings[0] }} />
+    </Tabs>
+  );
+}
