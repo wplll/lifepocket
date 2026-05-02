@@ -1,12 +1,19 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: "LifePocket",
-  description: "AI 日常生活整理 Web 应用"
+  description: "AI 日常生活整理 Web 应用",
+  icons: {
+    icon: "/images/app-logo.png",
+    apple: "/images/app-logo.png"
+  },
+  openGraph: {
+    title: "LifePocket / 生活口袋",
+    description: "把截图、票据、待办、账单和生活琐事，自动整理成清单和提醒。",
+    images: ["/images/readme-preview.png"]
+  }
 };
 
 export default function RootLayout({
@@ -16,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body className={inter.className}>{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

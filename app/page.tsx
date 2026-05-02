@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Bell,
@@ -7,8 +8,7 @@ import {
   CreditCard,
   ListChecks,
   Plane,
-  Receipt,
-  Sparkles
+  Receipt
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -54,25 +54,21 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="mx-auto w-full max-w-[420px]">
-            <div className="rounded-[2rem] border border-border bg-card p-4 shadow-[0_24px_70px_rgba(15,23,42,0.14)]">
-              <div className="rounded-[1.5rem] bg-background p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-muted-foreground">今日生活卡片</p>
-                    <h2 className="mt-1 text-xl font-semibold">5 月房租账单</h2>
-                  </div>
-                  <Sparkles className="h-5 w-5 text-accent" />
-                </div>
-                <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-                  <Preview label="金额" value="¥4,200.00" />
-                  <Preview label="提醒" value="5月4日 20:00" />
-                  <Preview label="类型" value="账单" />
-                  <Preview label="分类" value="居住" />
-                </div>
-                <div className="mt-4 rounded-lg bg-primary/10 p-3 text-sm leading-6 text-primary">
-                  AI 已识别为固定账单，并建议在到期前一天提醒。
-                </div>
+          <div className="mx-auto w-full max-w-[720px]">
+            <div className="overflow-hidden rounded-xl border border-border bg-card shadow-[0_24px_70px_rgba(15,23,42,0.14)]">
+              <Image
+                src="/images/landing-hero.png"
+                alt="LifePocket 将截图、票据、账单、清单和行程整理成生活卡片的产品展示图"
+                width={1680}
+                height={900}
+                className="h-auto w-full"
+                priority
+              />
+              <div className="grid gap-3 border-t border-border bg-card p-4 text-sm sm:grid-cols-4">
+                <Preview label="金额" value="¥4,200.00" />
+                <Preview label="提醒" value="5月4日 20:00" />
+                <Preview label="类型" value="账单" />
+                <Preview label="分类" value="居住" />
               </div>
             </div>
           </div>

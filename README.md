@@ -1,94 +1,128 @@
 # LifePocket / 生活口袋
 
-LifePocket / 生活口袋 是一个 AI 日常生活整理应用。用户可以上传截图、票据、小票、账单、预约信息、购物截图、旅行截图，或直接粘贴文本；系统会调用用户自己配置的书生模型 API，识别生活信息类型，提取结构化字段，并生成生活卡片、提醒、消费记录和清单。
+> Version 1.0.0
 
-核心定位：把截图、票据、待办、账单和生活琐事，自动整理成清单和提醒。
+[中文](README.md) | [English](README.en.md)
 
-## 产品预览
+![LifePocket preview](public/images/readme-preview.png)
 
-当前仓库包含 Web Demo 和 Expo 手机 App。预览图可按 [docs/image-prompts.md](docs/image-prompts.md) 中的 Prompt 生成后放入 `public/` 或 `assets/`，再替换这里的占位图。
+LifePocket / 生活口袋 是一个以手机端 App 为主的 AI 日常生活整理工具。用户可以上传截图、小票、账单、预约、购物订单、旅行信息，或直接粘贴文字；App 会调用用户自己配置的大模型 API，把零散生活信息整理成生活卡片、提醒、消费记录、历史清单和对话分析。
 
-```text
-Web Demo：Landing Page、生活看板、上传识别、生活卡片、消费看板、AI 清单、设置页
-Mobile App：首页、上传、消费、清单、设置、生活卡片详情
-```
+项目当前包含：
+
+- `apps/mobile`：Expo / React Native 手机 App，当前主版本功能入口。
+- `app`、`components`、`lib`：Next.js Web Demo，用于产品展示和轻量演示。
+- `docs`：用户手册、隐私说明等文档。
 
 ## 核心功能
 
-- 图片识别：手机端支持拍照、相册选择，并把图片发送到用户配置的模型接口识别。
-- 文本识别：粘贴账单、预约、购物、旅行、待办等文本，提取结构化生活信息。
-- 生活卡片：统一沉淀标题、摘要、金额、日期、地点、商家、分类、提醒等字段。
-- 本地提醒：通过 `expo-notifications` 创建本地通知提醒。
-- 消费统计：按本周、本月和分类汇总消费记录。
-- AI 清单生成：根据购物、旅行、出门等生活场景生成可勾选清单。
-- 用户自定义书生模型 API：用户在设置页填写 Endpoint、Model 和 API Token。
-- 本地保存和隐私保护：手机端使用本地存储保存卡片、清单和设置，Token 使用安全存储。
+### AI 上传识别
+
+- 支持从相册选择图片。
+- 支持拍照识别。
+- 支持粘贴文本识别。
+- 支持小票、账单、预约、购物截图、旅行信息、保修凭证、待办和备忘。
+- 一张图片或一段文本中包含多条独立记录时，可以生成多张生活卡片。
+- 识别结果支持单独保存或一键保存全部。
+
+### 生活卡片
+
+- 按类型保存生活事项：消费记录、待支付账单、预约日程、购物订单、旅行行程、保修凭证、待办事项、普通备忘、未知类型。
+- 支持卡片状态：待处理、已完成、已归档。
+- 支持查看详情、编辑类型、更新状态、设置提醒、归档或删除。
+- 首页优先展示待处理事项，归档不会删除数据。
+
+### 消费统计
+
+- 自动统计本地保存的消费记录。
+- 支持今日、本周、本月消费汇总。
+- 支持点击每日 / 每周 / 每月统计卡片查看明细。
+- 支持按消费分类查看明细。
+- 明细列表可进入来源生活卡片。
+
+### AI 清单
+
+- 输入生活场景生成清单，例如“周末露营”“搬家准备”“去医院看牙”。
+- 清单会保存到历史记录。
+- 支持查看多个历史清单。
+- 支持编辑标题、说明、数量、分类和清单项。
+- 支持添加、删除、勾选清单项。
+- 本地保存，重启 App 后仍可查看。
+
+### AI 对话
+
+手机端新增“大模型对话”页面，包含两种模式：
+
+- 基于记录：读取本地生活卡片和清单摘要，让模型回答“这个月花了多少钱”“最近有哪些待处理事项”等问题。
+- 生活助手：支持文字咨询，也支持拍照或选择图片后向模型提问。
+
+基于记录的对话只发送压缩摘要，不发送完整图片、完整 Token 或完整敏感原文。
+
+### 多模型配置
+
+- 支持配置多个 OpenAI Chat Completions 兼容接口。
+- 支持书生模型、OpenAI 兼容接口和自定义接口。
+- 支持配置 Endpoint、Model、API Token、是否支持视觉输入。
+- 支持设置默认模型。
+- 上传识别、清单生成和对话统一使用当前默认模型。
+- Token 使用本地安全存储，不硬编码在代码中。
 
 ## 技术栈
 
-- Web: Next.js 14, React 18, TypeScript, Tailwind CSS, lucide-react
-- Mobile: Expo, React Native, TypeScript, Expo Router
-- Storage: AsyncStorage, expo-secure-store
-- AI: InternLM / 书生模型兼容 Chat Completions API
-- Notification: expo-notifications
-- Image Picker: expo-image-picker
-- Reserved Backend: Supabase Auth / Postgres / Storage schema
+### Mobile App
+
+- Expo
+- React Native
+- Expo Router
+- TypeScript
+- AsyncStorage
+- expo-secure-store
+- expo-image-picker
+- expo-notifications
+- OpenAI-Compatible Chat Completions API
+
+### Web Demo
+
+- Next.js 14
+- React 18
+- TypeScript
+- Tailwind CSS
+- Supabase 预留 schema
 
 ## 项目结构
 
 ```text
 .
-├── app/                         # Next.js App Router 页面
-│   ├── page.tsx                 # Web Landing Page
-│   └── app/                     # Web Demo 操作台
-├── components/                  # Web UI 与 LifePocket 业务组件
-├── lib/                         # Web mock 数据、AI mock 提取、工具函数
-├── apps/mobile/                 # Expo / React Native App
-│   ├── app/                     # Expo Router 页面与 Tab
-│   └── src/
-│       ├── components/          # Mobile UI 组件
-│       ├── prompts/             # AI Prompt
-│       ├── services/            # 书生模型 API 与通知服务
-│       ├── storage/             # 本地卡片、清单、设置与 Token 存储
-│       ├── types/               # 生活信息类型
-│       └── utils/               # JSON 与日期工具
-├── supabase/schema.sql          # Supabase 预留 schema
-├── docs/image-prompts.md        # 可用于生成产品素材的图片 Prompt
+├── app/                         # Next.js Web Demo 页面
+├── components/                  # Web Demo 组件
+├── lib/                         # Web Demo mock 数据和工具
+├── public/                      # Web 静态资源
+├── docs/
+│   ├── user-manual.md           # 手机 App 用户手册
+│   └── privacy-android-internal.md
+├── apps/
+│   └── mobile/
+│       ├── app/                 # Expo Router 页面和路由
+│       │   ├── (tabs)/          # 首页、上传、消费、清单、对话、设置
+│       │   ├── expenses/        # 消费明细页
+│       │   ├── items/           # 生活卡片详情页
+│       │   └── lists/           # 清单详情页
+│       ├── assets/              # App 图标等资源
+│       └── src/
+│           ├── components/      # 移动端基础 UI
+│           ├── constants/       # 类型、状态、清单元信息
+│           ├── prompts/         # 识别、清单、对话 Prompt
+│           ├── services/        # 模型 Client、识别、通知服务
+│           ├── storage/         # 本地数据、清单、模型配置、Token 存储
+│           ├── types/           # TypeScript 类型
+│           └── utils/           # JSON、日期、消费统计、记录摘要工具
+├── supabase/                    # 预留数据库 schema
 └── README.md
 ```
 
 ## 快速开始
 
-### Web 运行方式
-
-```bash
-npm install
-npm run dev
-```
-
-浏览器打开 `http://localhost:3000`。
-
-构建生产版本：
-
-```bash
-npm run build
-npm run start
-```
-
-可选 Supabase 配置：
-
-```bash
-cp .env.example .env.local
-```
-
-然后填写：
-
-```bash
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-```
-
-### Mobile 运行方式
+### 运行手机 App
 
 ```bash
 cd apps/mobile
@@ -96,154 +130,143 @@ npm install
 npx expo start
 ```
 
-然后选择：
+启动后可以选择：
 
-- Expo Go 扫码打开真机预览；
+- 使用 Expo Go 扫码打开真机预览；
 - 按 `a` 打开 Android 模拟器；
-- 按 `i` 打开 iOS 模拟器，需 macOS 和 Xcode；
+- 按 `i` 打开 iOS 模拟器，需要 macOS 和 Xcode；
 - 按 `w` 打开 Expo Web 预览。
 
 类型检查：
 
 ```bash
+cd apps/mobile
 npm run typecheck
 ```
 
-## API 设置说明
+Android 内测构建：
 
-用户需要在 App 设置页填写：
-
-- API Endpoint
-- API Token
-- Model
-
-默认 Endpoint：
-
-```text
-https://chat.intern-ai.org.cn/api/v1/chat/completions
+```bash
+cd apps/mobile
+npm run build:android:preview
 ```
 
-默认 Model：
+### 运行 Web Demo
 
-```text
-intern-latest
+```bash
+npm install
+npm run dev
 ```
 
-安全说明：
+浏览器打开：
 
-- Token 不应写入代码；
-- Token 由用户自己填写；
-- Token 在原生 App 中保存在 `expo-secure-store`；
-- Web 预览环境使用 AsyncStorage 作为降级存储；
-- 不要提交 `.env`、`.env.local` 或真实密钥；
-- 日志和错误提示不要打印 Token。
+```text
+http://localhost:3000
+```
 
-## 手机端安装方案
+生产构建：
 
-### A. 开发者本地体验
+```bash
+npm run build
+npm run start
+```
 
-1. 安装 Node.js。
-2. 在仓库根目录执行 `npm install`。
-3. 进入 `apps/mobile` 后执行 `npm install`。
-4. 运行 `npx expo start`。
-5. 手机安装 Expo Go，并扫描终端或浏览器中的二维码。
+## App 初次使用
 
-这种方式适合开发测试，不适合正式分发给普通用户。
+1. 打开手机 App。
+2. 进入“设置”页。
+3. 添加或编辑模型配置。
+4. 填写 API Endpoint。
+5. 填写 Model。
+6. 填写自己的 API Token。
+7. 如需图片识别，开启“支持图片识别 / 视觉输入”。
+8. 点击“测试连接”。
+9. 回到“上传”页开始识别。
 
-### B. Android 真机安装
+书生模型默认配置可参考：
 
-Expo Go 方式：
+```text
+API Endpoint: https://chat.intern-ai.org.cn/api/v1/chat/completions
+Model: intern-latest
+```
 
-1. Android 手机安装 Expo Go。
-2. 开发者运行 `cd apps/mobile && npx expo start`。
-3. 手机扫码打开。
+API Token 需要用户自行申请，项目不会内置任何示例 Token。设置页提供“前往申请 API Token”按钮，指向：
 
-APK 方式：
+```text
+https://internlm.intern-ai.org.cn/api/tokens
+```
 
-1. 安装并登录 EAS CLI：`npm install -g eas-cli`、`eas login`。
-2. 在 `apps/mobile` 中配置 EAS：`eas build:configure`。
-3. 创建 preview APK 构建配置。
-4. 执行 `eas build -p android --profile preview`。
-5. 下载生成的 APK，传到 Android 手机安装。
-6. Android 可能需要允许“安装未知来源应用”。
+## 隐私与安全
 
-正式分发建议使用应用商店或可信渠道，不建议随意传播 APK。
+- 项目不内置任何 API Token。
+- Token 由用户自行填写。
+- 手机端 Token 使用 `expo-secure-store` 保存。
+- Web 预览环境使用 AsyncStorage 作为降级存储。
+- 上传图片、粘贴文本、对话提问时，内容会发送到用户当前选择的模型接口。
+- 基于记录的对话只发送摘要，不发送完整图片、完整 Token 或完整敏感原文。
+- 不建议上传身份证、银行卡、完整合同、敏感票据等高敏感信息。
+- 不要把 `.env`、`.env.local`、真实 Token 或个人隐私截图提交到仓库。
 
-### C. Android AAB 上架
+## 用户文档
 
-1. 在 `apps/mobile` 中执行 `eas build -p android --profile production`。
-2. 生成 AAB。
-3. 上传到 Google Play Console。
-4. 按 Google Play 要求完成签名、隐私政策、测试和审核。
+普通用户使用说明见：
 
-### D. iPhone 安装
+```text
+docs/user-manual.md
+```
 
-Expo Go 方式：
+Android 内测隐私说明见：
 
-1. iPhone 安装 Expo Go。
-2. 开发者运行 `cd apps/mobile && npx expo start`。
-3. iPhone 扫码打开。
+```text
+docs/privacy-android-internal.md
+```
 
-TestFlight 方式：
+## 开发检查
 
-1. 需要 Apple Developer Account。
-2. 在 `apps/mobile` 中配置 EAS。
-3. 执行 `eas build -p ios --profile production`。
-4. 上传到 App Store Connect。
-5. 通过 TestFlight 邀请用户测试。
+根目录检查：
 
-iOS 不能承诺绕过苹果签名直接安装；面向普通用户应使用 TestFlight 或 App Store。
+```bash
+npm run check
+```
 
-### E. Web / PWA 体验
+手机端类型检查：
 
-当前 Web Demo 是响应式网页，可以在手机浏览器打开，并通过浏览器菜单添加到主屏幕。它适合展示和轻量体验，但与原生 App 相比，在相机、通知、安全存储和离线能力上会有差异。
+```bash
+cd apps/mobile
+npm run typecheck
+```
 
-## 构建与发布
-
-Web 可部署到 Vercel 或 Netlify：
+Web 构建：
 
 ```bash
 npm run build
 ```
 
-Mobile 使用 EAS Build：
+## 版本状态
 
-```bash
-cd apps/mobile
-eas build -p android --profile preview
-eas build -p android --profile production
-eas build -p ios --profile production
-```
+LifePocket 1.0.0 已包含以下移动端功能闭环：
 
-发布前请检查：
+- 上传识别；
+- 多记录生活卡片保存；
+- 卡片详情、类型和状态管理；
+- 消费汇总和明细；
+- 历史清单生成与编辑；
+- 大模型对话；
+- 多模型 API 配置；
+- 本地存储和 Token 安全存储；
+- 用户手册和隐私说明。
 
-- 没有提交真实 Token；
-- `.env.local` 未进入 Git；
-- App 设置页默认 Endpoint 和 Model 正确；
-- Android/iOS 权限说明符合应用用途；
-- 隐私政策说明 AI 调用会发送用户选择的图片或文本。
+后续可继续扩展：
 
-## 隐私与安全
-
-- 项目不内置任何 API Token。
-- 用户 Token 由用户自己填写，并保存在本地。
-- 图片默认保存在本地；调用 AI 时，才会把用户选择的图片或文本发送到用户配置的模型接口。
-- 不应上传敏感票据、身份证、银行卡等信息，除非用户理解模型接口和数据传输风险。
-- 日志不要打印 Token。
-- 不要把 `.env`、`.env.local`、真实 API Token 或个人隐私截图提交到仓库。
-
-## Roadmap
-
-- 多语言支持
-- 家庭共享
-- 更丰富的消费分析
-- 离线 OCR
-- 云同步
-- 桌面端
-- 更多模型支持
-- 更完整的提醒系统
-- Web 端接入真实上传、账号和数据库
+- 云同步；
+- 家庭共享；
+- 离线 OCR；
+- 更完整的提醒规则；
+- 更丰富的消费分析；
+- 桌面端或 Web 端真实数据接入。
 
 ## License
 
-当前仓库未发现独立 License 文件。若项目准备开源分发，建议根据项目目标选择合适许可证；常见选择是 MIT License。
+This project is licensed under the MIT License.
+
+See [LICENSE](LICENSE) for details.

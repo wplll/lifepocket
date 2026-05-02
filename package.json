@@ -1,15 +1,15 @@
 {
   "name": "lifepocket",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "check": "npm run lint && tsc --noEmit && npm --prefix apps/mobile run typecheck",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/swc-win32-x64-msvc": "^14.2.33",
     "@supabase/supabase-js": "^2.43.5",
     "clsx": "^2.1.1",
     "lucide-react": "^0.468.0",

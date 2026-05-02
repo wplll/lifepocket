@@ -4,10 +4,20 @@
     "slug": "lifepocket-mobile",
     "version": "0.1.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "scheme": "lifepocket",
+    "newArchEnabled": false,
     "userInterfaceStyle": "light",
     "plugins": [
       "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "LifePocket 需要使用相机拍摄小票、账单和生活信息截图。",
+          "photosPermission": "LifePocket 需要读取相册图片用于 AI 识别。",
+          "microphonePermission": false
+        }
+      ],
       "expo-secure-store",
       "expo-notifications"
     ],
@@ -19,11 +29,26 @@
       }
     },
     "android": {
+      "package": "com.lifepocket.mobile",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#f8f3ea"
+      },
       "permissions": [
         "CAMERA",
+        "READ_EXTERNAL_STORAGE",
         "READ_MEDIA_IMAGES",
         "POST_NOTIFICATIONS"
       ]
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "138e4ab5-0626-4178-8011-8424a1d42b5c"
+      }
     }
   }
 }

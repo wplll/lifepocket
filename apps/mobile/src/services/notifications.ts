@@ -1,15 +1,10 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false
-  })
-});
+let notificationHandlerConfigured = false;
 
 export async function scheduleLocalReminder(title: string, body: string, remindAt: string) {
+  configureNotificationHandler();
   const date = new Date(remindAt.replace(" ", "T"));
   if (Number.isNaN(date.getTime()) || date <= new Date()) {
     throw new Error("提醒时间无效或已经过去。");
@@ -35,4 +30,16 @@ export async function scheduleLocalReminder(title: string, body: string, remindA
       channelId: "lifepocket-reminders"
     }
   });
+}
+
+function configureNotificationHandler() {
+  if (notificationHandlerConfigured) return;
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false
+    })
+  });
+  notificationHandlerConfigured = true;
 }

@@ -3,9 +3,9 @@ import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 import { InternAISettings } from "@/types/life";
 
-const SETTINGS_KEY = "lifepocket.ai.settings";
-const TOKEN_KEY = "lifepocket.ai.token";
-const WEB_TOKEN_KEY = "lifepocket.ai.token.web-preview";
+export const LEGACY_SETTINGS_KEY = "lifepocket.ai.settings";
+export const LEGACY_TOKEN_KEY = "lifepocket.ai.token";
+export const LEGACY_WEB_TOKEN_KEY = "lifepocket.ai.token.web-preview";
 
 export const defaultSettings: InternAISettings = {
   endpoint: "https://chat.intern-ai.org.cn/api/v1/chat/completions",
@@ -14,57 +14,74 @@ export const defaultSettings: InternAISettings = {
 };
 
 export async function loadSettings(): Promise<InternAISettings> {
-  const [settingsRaw, token] = await Promise.all([
-    AsyncStorage.getItem(SETTINGS_KEY),
-    getStoredToken()
-  ]);
-  const settings = settingsRaw ? JSON.parse(settingsRaw) as Omit<InternAISettings, "apiToken"> : defaultSettings;
-  return {
-    endpoint: settings.endpoint || defaultSettings.endpoint,
-    model: settings.model || defaultSettings.model,
-    apiToken: token || ""
-  };
+  try {
+    const [settingsRaw, token] = await Promise.all([
+      AsyncStorage.getItem(LEGACY_SETTINGS_KEY),
+      getStoredToken(LEGACY_TOKEN_KEY, LEGACY_WEB_TOKEN_KEY)
+    ]);
+    const settings = parseSettings(settingsRaw);
+    return {
+      endpoint: settings.endpoint || defaultSettings.endpoint,
+      model: settings.model || defaultSettings.model,
+      apiToken: token || ""
+    };
+  } catch {
+    return defaultSettings;
+  }
 }
 
 export async function saveSettings(settings: InternAISettings) {
   await AsyncStorage.setItem(
-    SETTINGS_KEY,
+    LEGACY_SETTINGS_KEY,
     JSON.stringify({ endpoint: settings.endpoint, model: settings.model })
   );
   if (settings.apiToken.trim()) {
-    await setStoredToken(settings.apiToken.trim());
+    await setStoredToken(LEGACY_TOKEN_KEY, LEGACY_WEB_TOKEN_KEY, settings.apiToken.trim());
   }
 }
 
 export async function clearApiToken() {
-  await deleteStoredToken();
+  await deleteStoredToken(LEGACY_TOKEN_KEY, LEGACY_WEB_TOKEN_KEY);
 }
 
 export function maskToken(token: string) {
   if (!token) return "";
   if (token.length <= 8) return "••••••";
-  return `${token.slice(0, 4)}••••••${token.slice(-4)}`;
+  return `${token.slice(0, 4)}••••${token.slice(-4)}`;
 }
 
-async function getStoredToken() {
+export async function getStoredToken(nativeKey: string, webKey?: string) {
   if (Platform.OS === "web") {
-    return AsyncStorage.getItem(WEB_TOKEN_KEY);
+    return AsyncStorage.getItem(webKey || nativeKey);
   }
-  return SecureStore.getItemAsync(TOKEN_KEY);
+  return SecureStore.getItemAsync(nativeKey);
 }
 
-async function setStoredToken(token: string) {
+export async function setStoredToken(nativeKey: string, webKey: string | undefined, token: string) {
   if (Platform.OS === "web") {
-    await AsyncStorage.setItem(WEB_TOKEN_KEY, token);
+    await AsyncStorage.setItem(webKey || nativeKey, token);
     return;
   }
-  await SecureStore.setItemAsync(TOKEN_KEY, token);
+  await SecureStore.setItemAsync(nativeKey, token);
 }
 
-async function deleteStoredToken() {
+export async function deleteStoredToken(nativeKey: string, webKey?: string) {
   if (Platform.OS === "web") {
-    await AsyncStorage.removeItem(WEB_TOKEN_KEY);
+    await AsyncStorage.removeItem(webKey || nativeKey);
     return;
   }
-  await SecureStore.deleteItemAsync(TOKEN_KEY);
+  await SecureStore.deleteItemAsync(nativeKey);
+}
+
+function parseSettings(settingsRaw: string | null): Omit<InternAISettings, "apiToken"> {
+  if (!settingsRaw) return defaultSettings;
+  try {
+    const parsed = JSON.parse(settingsRaw) as Partial<InternAISettings>;
+    return {
+      endpoint: typeof parsed.endpoint === "string" ? parsed.endpoint : defaultSettings.endpoint,
+      model: typeof parsed.model === "string" ? parsed.model : defaultSettings.model
+    };
+  } catch {
+    return defaultSettings;
+  }
 }
